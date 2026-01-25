@@ -20,6 +20,62 @@ body {
   overflow-x: hidden;
 }
 
+h1,
+.detail-title,
+.book-title {
+  font-family: "Playfair Display", serif;
+  font-weight: 500;
+}
+
+.intro {
+  position: fixed;
+  inset: 0;
+  background: var(--cream);
+  display: grid;
+  place-items: center;
+  z-index: 20;
+  animation: introFade 2.6s ease forwards;
+}
+
+.intro-text {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  letter-spacing: 0.4em;
+  color: var(--dark-green);
+  animation: introText 2.2s ease forwards;
+}
+
+body.intro-complete .intro {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes introText {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+}
+
+@keyframes introFade {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 .background-glow {
   position: fixed;
   inset: 0;
@@ -88,7 +144,7 @@ body {
 
 h1 {
   font-size: clamp(3rem, 6vw, 6rem);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.1em;
   margin: 0.7rem 0 0.5rem;
 }
@@ -137,6 +193,17 @@ h1 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
+}
+
+body.reveal-ready .reveal-card {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+body.reveal-ready .reveal-card.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .section-card {

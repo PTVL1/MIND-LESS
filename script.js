@@ -1,9 +1,11 @@
 const cards = document.querySelectorAll(".section-card");
 const currentMonth = new Date().getMonth() + 1;
+const intro = document.getElementById("intro");
 const detailTitle = document.getElementById("detailTitle");
 const detailDescription = document.getElementById("detailDescription");
 const detailStatus = document.getElementById("detailStatus");
 const timelineStatus = document.getElementById("timelineStatus");
+const timeline = document.querySelector(".timeline");
 const bookOverlay = document.getElementById("bookOverlay");
 const bookClose = document.getElementById("bookClose");
 const bookNumber = document.getElementById("bookNumber");
@@ -12,21 +14,22 @@ const bookSubtitle = document.getElementById("bookSubtitle");
 const bookDescription = document.getElementById("bookDescription");
 const bookDetails = document.getElementById("bookDetails");
 const monthNames = [
-  "Janeiro",
-  "Fevereiro",
-  "Março",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
-timelineStatus.textContent = `Mês atual: ${monthNames[currentMonth - 1]}`;
+document.body.classList.add("reveal-ready");
+timelineStatus.textContent = `Current month: ${monthNames[currentMonth - 1]}`;
 
 const updateDetail = (card) => {
   const month = Number(card.dataset.month);
@@ -37,8 +40,8 @@ const updateDetail = (card) => {
   detailTitle.textContent = title;
   detailDescription.textContent = description;
   detailStatus.textContent = locked
-    ? `Bloqueado · desbloqueia em ${monthNames[month - 1]}`
-    : `Disponível · ${monthNames[month - 1]}`;
+    ? `Locked · unlocks in ${monthNames[month - 1]}`
+    : `Available · ${monthNames[month - 1]}`;
   detailStatus.dataset.state = locked ? "locked" : "open";
 };
 
@@ -58,6 +61,24 @@ const closeBook = () => {
   bookOverlay.classList.remove("active");
   bookOverlay.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
+};
+
+const revealCards = () => {
+  if (!timeline) {
+    return;
+  }
+  const rect = timeline.getBoundingClientRect();
+  const threshold = window.innerHeight;
+  if (rect.top < threshold * 0.75) {
+    document.querySelectorAll(".reveal-card:not(.reveal-late)").forEach((card) => {
+      card.classList.add("visible");
+    });
+  }
+  if (rect.top < threshold * 0.35) {
+    document.querySelectorAll(".reveal-card.reveal-late").forEach((card) => {
+      card.classList.add("visible");
+    });
+  }
 };
 
 cards.forEach((card, index) => {
@@ -87,6 +108,10 @@ if (firstAvailable) {
   updateDetail(firstAvailable);
 }
 
+revealCards();
+window.addEventListener("scroll", revealCards);
+window.addEventListener("resize", revealCards);
+
 bookClose.addEventListener("click", closeBook);
 bookOverlay.addEventListener("click", (event) => {
   if (event.target === bookOverlay) {
@@ -99,3 +124,12 @@ document.addEventListener("keydown", (event) => {
     closeBook();
   }
 });
+
+if (intro) {
+  setTimeout(() => {
+    document.body.classList.add("intro-complete");
+    setTimeout(() => {
+      intro.remove();
+    }, 400);
+  }, 2400);
+}
