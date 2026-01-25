@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MINDLESS — Concept Store</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="background-glow"></div>
+    <header class="hero">
+      <nav class="nav">
+        <div class="logo" aria-label="Logotipo MINDLESS">(*-*)</div>
+        <span class="nav-divider"></span>
+        <span class="tagline">MINDLESS concept store</span>
+      </nav>
+      <div class="hero-content">
+        <p class="eyebrow">Luxury minimalism</p>
+        <h1>MINDLESS</h1>
+        <p class="subtitle">achieving imperfection</p>
+        <p class="description">
+          Uma narrativa anual em 12 secções desbloqueadas mês a mês. Cada capítulo representa uma
+          fase emocional distinta, em equilíbrio entre a precisão e o caos.
+        </p>
+      </div>
+    </header>
+
+    <main class="timeline" aria-label="Secções mensais">
+      <div class="timeline-header">
+        <p class="timeline-title">Capítulos anuais</p>
+        <p class="timeline-status" id="timelineStatus">Mês atual: —</p>
+      </div>
+      <div class="section-grid">
+        <button
+          class="section-card"
+          data-month="1"
+          data-description="O início de uma nova vida, com energia crua e possibilidades infinitas."
+          data-details="Uma narrativa de renascimento, onde a luz rompe o silêncio e inaugura o primeiro capítulo."
+          type="button"
+        >
+          <span class="section-number">Q1</span>
+          <span class="section-title">New Life Concept</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="2"
+          data-description="Disciplina estética e emocional para um equilíbrio consciente."
+          data-details="A beleza do controle: linhas precisas e rituais que sustentam a nova fase."
+          type="button"
+        >
+          <span class="section-number">Q2</span>
+          <span class="section-title">Controlled</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="3"
+          data-description="Crer no invisível enquanto se busca sentido."
+          data-details="A fé como textura emocional, suave e intensa, sustentando o invisível."
+          type="button"
+        >
+          <span class="section-number">Q3</span>
+          <span class="section-title">Faith</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="4"
+          data-description="Questionar a própria verdade antes de contar a história."
+          data-details="Uma reflexão sobre identidade, vulnerabilidade e as verdades que moldam o capítulo."
+          type="button"
+        >
+          <span class="section-number">Q4</span>
+          <span class="section-title">Am I a Liar?</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="5"
+          data-description="Tempo como matéria-prima, sempre escassa e preciosa."
+          data-details="O tempo como luxo supremo: lento, circular e profundamente consciente."
+          type="button"
+        >
+          <span class="section-number">Q5</span>
+          <span class="section-title">Time</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="6"
+          data-description="O ponto médio: equilíbrio entre hemisférios internos."
+          data-details="No equador, equilíbrio entre sombra e luz, entre o impulso e o silêncio."
+          type="button"
+        >
+          <span class="section-number">Q6</span>
+          <span class="section-title">Equator</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="7"
+          data-description="Criar universos próprios e assumir o papel de demiurgo."
+          data-details="Criar mundos internos como quem desenha uma constelação particular."
+          type="button"
+        >
+          <span class="section-number">Q7</span>
+          <span class="section-title">Godus</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="8"
+          data-description="Uma festa após o caos, celebrando o que ficou."
+          data-details="Entre ruínas e celebração, a alegria ganha forma leve e abstrata."
+          type="button"
+        >
+          <span class="section-number">Q8</span>
+          <span class="section-title">Off a Party</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="9"
+          data-description="Premiações de gestos pequenos e conquistas íntimas."
+          data-details="O mérito silencioso: recompensas internas, discretas e profundas."
+          type="button"
+        >
+          <span class="section-number">Q9</span>
+          <span class="section-title">ckBawards</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="10"
+          data-description="Reaprender a consumir, digerir e ressignificar."
+          data-details="Antropofagia contemporânea: absorver o mundo e devolver com nova pele."
+          type="button"
+        >
+          <span class="section-number">Q10</span>
+          <span class="section-title">Anthropophagi</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="11"
+          data-description="A beleza de escolher, mesmo sem todas as respostas."
+          data-details="Escolhas sutis, quase invisíveis, que redefinem o percurso."
+          type="button"
+        >
+          <span class="section-number">Q11</span>
+          <span class="section-title">Choice</span>
+        </button>
+        <button
+          class="section-card"
+          data-month="12"
+          data-description="O encerramento ritual do ciclo e o espaço para recomeçar."
+          data-details="O fim como portal: encerramento ritual, preparando o reinício."
+          type="button"
+        >
+          <span class="section-number">Q12</span>
+          <span class="section-title">End Life Concept</span>
+        </button>
+      </div>
+      <section class="section-detail" aria-live="polite">
+        <div>
+          <p class="detail-label">Secção selecionada</p>
+          <h2 class="detail-title" id="detailTitle">Selecione um capítulo</h2>
+          <p class="detail-description" id="detailDescription">
+            Explore as doze fases da narrativa MINDLESS e acompanhe o desbloqueio mensal.
+          </p>
+        </div>
+        <div class="detail-status" id="detailStatus">Aguardando seleção</div>
+      </section>
+    </main>
+
+    <div class="book-overlay" id="bookOverlay" aria-hidden="true">
+      <div class="book-panel" role="dialog" aria-modal="true" aria-labelledby="bookTitle">
+        <button class="book-close" id="bookClose" type="button" aria-label="Fechar capítulo">
+          ✕
+        </button>
+        <div class="book-header">
+          <span class="book-number" id="bookNumber">Q1</span>
+          <h2 class="book-title" id="bookTitle">New Life Concept</h2>
+          <p class="book-subtitle" id="bookSubtitle">achieving imperfection</p>
+        </div>
+        <div class="book-body">
+          <div class="book-text">
+            <p id="bookDescription">
+              Uma narrativa sensorial sobre a primeira centelha do ano, onde cada detalhe aponta
+              para a imperfeição perfeita.
+            </p>
+            <p class="book-details" id="bookDetails">
+              Tecidos translúcidos, sombras orgânicas e a geometria suave de uma nova vida.
+            </p>
+          </div>
+          <div class="book-gallery">
+            <div class="book-image image-one"></div>
+            <div class="book-image image-two"></div>
+            <div class="book-image image-three"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-line"></div>
+      <p>© 2024 MINDLESS. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
