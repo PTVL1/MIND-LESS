@@ -20,6 +20,10 @@ body {
   overflow-x: hidden;
 }
 
+body.intro-active {
+  overflow: hidden;
+}
+
 h1,
 .detail-title,
 .book-title {
