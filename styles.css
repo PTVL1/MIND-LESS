@@ -195,8 +195,8 @@ h1 {
 
 .section-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.8rem;
 }
 
 body.reveal-ready .reveal-card {
@@ -214,12 +214,12 @@ body.reveal-ready .reveal-card.visible {
   border: 1px solid rgba(0, 82, 3, 0.3);
   background: rgba(255, 255, 255, 0.6);
   color: var(--dark-green);
-  padding: 2.2rem 2rem;
+  padding: 2.8rem 2.4rem;
   border-radius: 24px;
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -256,14 +256,14 @@ body.reveal-ready .reveal-card.visible {
 }
 
 .section-number {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   letter-spacing: 0.4em;
   text-transform: uppercase;
   color: rgba(0, 82, 3, 0.6);
 }
 
 .section-title {
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   font-weight: 500;
 }
 
@@ -506,6 +506,10 @@ body.reveal-ready .reveal-card.visible {
     width: 40px;
   }
 
+  .section-grid {
+    grid-template-columns: 1fr;
+  }
+
   .section-detail {
     flex-direction: column;
     align-items: flex-start;
@@ -513,5 +517,11 @@ body.reveal-ready .reveal-card.visible {
 
   .book-panel {
     padding: 2rem;
+  }
+}
+
+@media (max-width: 1100px) {
+  .section-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
