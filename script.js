@@ -94,12 +94,13 @@ cards.forEach((card, index) => {
   }
 
   card.addEventListener("click", () => {
+    if (month > currentMonth) {
+      return;
+    }
     cards.forEach((item) => item.classList.remove("active"));
     card.classList.add("active");
     updateDetail(card);
-    if (month <= currentMonth) {
-      openBook(card);
-    }
+    openBook(card);
   });
 });
 
