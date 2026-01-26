@@ -29,6 +29,9 @@ const monthNames = [
 ];
 
 document.body.classList.add("reveal-ready");
+if (intro) {
+  document.body.classList.add("intro-active");
+}
 timelineStatus.textContent = `Current month: ${monthNames[currentMonth - 1]}`;
 
 const updateDetail = (card) => {
@@ -125,11 +128,17 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+const finishIntro = () => {
+  document.body.classList.add("intro-complete");
+  document.body.classList.remove("intro-active");
+  setTimeout(() => {
+    intro?.remove();
+  }, 400);
+};
+
 if (intro) {
   setTimeout(() => {
-    document.body.classList.add("intro-complete");
-    setTimeout(() => {
-      intro.remove();
-    }, 400);
+    finishIntro();
   }, 2400);
+  intro.addEventListener("click", finishIntro, { once: true });
 }
