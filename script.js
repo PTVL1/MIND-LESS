@@ -6,12 +6,16 @@ const ui = {
   altitude: document.querySelector("#altitude"), best: document.querySelector("#best"), shots: document.querySelector("#shots"),
   fill: document.querySelector("#altitudeFill"), bullet: document.querySelector("#bulletStatus"), bulletText: document.querySelector("#bulletText"),
   crosshair: document.querySelector("#crosshair"), tip: document.querySelector("#controlsTip"), section: document.querySelector("#sectionTag"),
-  soundButton: document.querySelector("#soundButton"), soundLabel: document.querySelector("#soundLabel")
+  soundButton: document.querySelector("#soundButton"), soundLabel: document.querySelector("#soundLabel"),
+  help: document.querySelector("#helpOverlay"), helpButton: document.querySelector("#helpButton"),
+  helpClose: document.querySelector("#helpClose"), helpReady: document.querySelector("#helpReady")
 };
 
-let W, H, scale, started = false, soundOn = true, audio, last = 0, shake = 0, flash = 0;
+let scale, started = false, hasEntered = false, resumeAfterHelp = false, soundOn = true, audio, last = 0, shake = 0, flash = 0;
 let mouse = { x: innerWidth * .7, y: innerHeight * .5 };
-let cameraY = 0, bestHeight = +(localStorage.getItem("kickback-best") || 0), shotCount = 0;
+function readBest(){try{return +(localStorage.getItem("kickback-best")||0)}catch{return 0}}
+function saveBest(value){try{localStorage.setItem("kickback-best",value)}catch{/* Storage can be unavailable in privacy mode. */}}
+let cameraY = 0, bestHeight = readBest(), shotCount = 0;
 const worldWidth = 900, topHeight = 5600;
 const player = { x: 450, y: 70, vx: 0, vy: 0, r: 18, angle: 0, loaded: true, grounded: false, reloadGlow: 0 };
 let particles = [], trails = [], bullet = null;
@@ -26,19 +30,24 @@ const platforms = [
 const walls = [{x:40,y:820,w:22,h:360},{x:838,y:1410,w:22,h:390},{x:40,y:2500,w:22,h:430},{x:838,y:3660,w:22,h:350}];
 const sections=[{y:0,n:"01",name:"The Concrete Nursery"},{y:1400,n:"02",name:"Bad Decisions"},{y:2800,n:"03",name:"The Long Regret"},{y:4100,n:"04",name:"Aim Somewhere Else"},{y:5200,n:"05",name:"The Last Laugh"}];
 
-function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;scale=Math.min(innerWidth/900,1.3);ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}
+function resize(){canvas.width=innerWidth*devicePixelRatio;canvas.height=innerHeight*devicePixelRatio;scale=Math.min(innerWidth/900,1.3);ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}
 addEventListener("resize",resize);resize();
-function tone(freq,duration,type="sine",volume=.08){if(!soundOn)return;audio ||= new AudioContext();const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,audio.currentTime);o.frequency.exponentialRampToValueAtTime(Math.max(35,freq*.4),audio.currentTime+duration);g.gain.setValueAtTime(volume,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+duration)}
-function reset(){Object.assign(player,{x:450,y:70,vx:0,vy:0,loaded:true,grounded:false});cameraY=0;shotCount=0;particles=[];bullet=null;ui.finish.hidden=true;updateUI()}
+function ensureAudio(){const AudioEngine=window.AudioContext||window.webkitAudioContext;if(!audio&&AudioEngine)audio=new AudioEngine();return audio}
+function tone(freq,duration,type="sine",volume=.08){const engine=soundOn&&ensureAudio();if(!engine)return;const o=engine.createOscillator(),g=engine.createGain();o.type=type;o.frequency.setValueAtTime(freq,engine.currentTime);o.frequency.exponentialRampToValueAtTime(Math.max(35,freq*.4),engine.currentTime+duration);g.gain.setValueAtTime(volume,engine.currentTime);g.gain.exponentialRampToValueAtTime(.001,engine.currentTime+duration);o.connect(g).connect(engine.destination);o.start();o.stop(engine.currentTime+duration)}
+function reset(){Object.assign(player,{x:450,y:70,vx:0,vy:0,loaded:true,grounded:false});cameraY=0;shotCount=0;particles=[];trails=[];bullet=null;ui.finish.hidden=true;started=true;last=performance.now();updateUI()}
 function fire(){if(!started||!player.loaded)return;const sx=(player.x-worldWidth/2)*scale+innerWidth/2,sy=innerHeight*.66-(player.y-cameraY)*scale;const dx=(mouse.x-sx)/scale,dy=-(mouse.y-sy)/scale,len=Math.hypot(dx,dy)||1,nx=dx/len,ny=dy/len;player.vx-=nx*620;player.vy-=ny*620;player.loaded=false;player.grounded=false;bullet={x:player.x+nx*34,y:player.y+ny*34,vx:nx*1150,vy:ny*1150,life:.7};shotCount++;shake=14;flash=1;tone(110,.22,"sawtooth",.15);for(let i=0;i<18;i++)particles.push({x:player.x+nx*35,y:player.y+ny*35,vx:nx*(80+Math.random()*180)+(Math.random()-.5)*150,vy:ny*(80+Math.random()*180)+(Math.random()-.5)*150,life:.2+Math.random()*.25,c:"#e9ff4a"});updateUI()}
 canvas.addEventListener("pointermove",e=>{mouse={x:e.clientX,y:e.clientY};ui.crosshair.style.left=e.clientX+"px";ui.crosshair.style.top=e.clientY+"px"});
-canvas.addEventListener("pointerdown",fire);
-ui.startButton.onclick=()=>{started=true;ui.start.classList.add("hidden");audio ||= new AudioContext();setTimeout(()=>ui.start.remove(),700)};
+canvas.addEventListener("pointerdown",event=>{mouse={x:event.clientX,y:event.clientY};fire()});
+function openHelp(){resumeAfterHelp=started;started=false;ui.help.hidden=false;ui.helpReady.focus()}
+function closeHelp(){ui.help.hidden=true;if(!hasEntered){hasEntered=true;started=true;ui.start.classList.add("hidden");setTimeout(()=>ui.start?.remove(),700)}else{started=resumeAfterHelp}last=performance.now()}
+ui.startButton.onclick=()=>{ensureAudio();openHelp()};
 ui.restart.onclick=reset;
 ui.soundButton.onclick=()=>{soundOn=!soundOn;ui.soundButton.classList.toggle("muted",!soundOn);ui.soundLabel.textContent=soundOn?"Sound on":"Sound off"};
+ui.helpButton.onclick=openHelp;ui.helpClose.onclick=closeHelp;ui.helpReady.onclick=closeHelp;
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!ui.help.hidden)closeHelp()});
 
 function worldToScreen(x,y){return{x:(x-worldWidth/2)*scale+innerWidth/2,y:innerHeight*.66-(y-cameraY)*scale}}
-function updateUI(){const a=Math.max(0,Math.floor(player.y/10));bestHeight=Math.max(bestHeight,a);localStorage.setItem("kickback-best",bestHeight);ui.altitude.textContent=a;ui.best.textContent=bestHeight;ui.shots.textContent=shotCount;ui.fill.style.width=Math.min(100,a/(topHeight/10)*100)+"%";ui.bullet.classList.toggle("empty",!player.loaded);ui.bullet.classList.toggle("ready",player.loaded);ui.bulletText.textContent=player.loaded?"Ready":"Empty";const s=[...sections].reverse().find(v=>player.y>=v.y)||sections[0];ui.section.innerHTML=`<span>${s.n}</span> ${s.name}`}
+function updateUI(){const a=Math.max(0,Math.floor(player.y/10));if(a>bestHeight){bestHeight=a;saveBest(bestHeight)}ui.altitude.textContent=a;ui.best.textContent=bestHeight;ui.shots.textContent=shotCount;ui.fill.style.width=Math.min(100,a/(topHeight/10)*100)+"%";ui.bullet.classList.toggle("empty",!player.loaded);ui.bullet.classList.toggle("ready",player.loaded);ui.bulletText.textContent=player.loaded?"Ready":"Empty";const s=[...sections].reverse().find(v=>player.y>=v.y)||sections[0];ui.section.innerHTML=`<span>${s.n}</span> ${s.name}`}
 function collideSurface(s,dt){const cx=Math.max(s.x,Math.min(player.x,s.x+s.w)),cy=Math.max(s.y,Math.min(player.y,s.y+s.h));const dx=player.x-cx,dy=player.y-cy;if(dx*dx+dy*dy<player.r*player.r){const prevY=player.y-player.vy*dt;if(prevY>=s.y+s.h-3&&player.vy<0){player.y=s.y+s.h+player.r;player.vy=Math.max(0,-player.vy*.12);player.vx*=.78;player.grounded=true;reload()}else if(Math.abs(dx)>Math.abs(dy)){player.x=cx+(dx<0?-player.r:player.r);player.vx*=-.28;reload()}else{player.y=cy+(dy<0?-player.r:player.r);player.vy*=-.25;reload()}}}
 function reload(){if(!player.loaded){player.loaded=true;player.reloadGlow=1;tone(480,.09,"square",.035);updateUI()}}
 function update(dt,time){if(!started)return;platforms.forEach(p=>{if(p.moving)p.x=p.baseX+Math.sin(time*.001+p.phase)*95});player.grounded=false;player.vy-=1250*dt;player.vx*=Math.pow(.997,dt*60);player.vy*=Math.pow(.999,dt*60);player.x+=player.vx*dt;player.y+=player.vy*dt;if(player.x-player.r<25){player.x=25+player.r;player.vx=Math.abs(player.vx)*.35;reload()}if(player.x+player.r>875){player.x=875-player.r;player.vx=-Math.abs(player.vx)*.35;reload()}platforms.forEach(p=>collideSurface(p,dt));walls.forEach(w=>collideSurface(w,dt));if(player.y<45){player.y=45;player.vy=Math.max(0,player.vy);reload()}if(player.y>topHeight+120){ui.finish.hidden=false;started=false}const target=Math.max(0,player.y-innerHeight/(scale)*.54);cameraY+=(target-cameraY)*Math.min(1,dt*4.5);player.angle=Math.atan2(-(mouse.y-(innerHeight*.66-(player.y-cameraY)*scale)),mouse.x-((player.x-worldWidth/2)*scale+innerWidth/2));player.reloadGlow=Math.max(0,player.reloadGlow-dt*2);if(bullet){bullet.x+=bullet.vx*dt;bullet.y+=bullet.vy*dt;bullet.life-=dt;trails.push({x:bullet.x,y:bullet.y,life:.14});if(bullet.life<=0)bullet=null}particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy-=500*dt;p.life-=dt});particles=particles.filter(p=>p.life>0);trails.forEach(t=>t.life-=dt);trails=trails.filter(t=>t.life>0);shake*=Math.pow(.03,dt);flash=Math.max(0,flash-dt*5);ui.tip.style.opacity=shotCount>1?0:1;updateUI()}
